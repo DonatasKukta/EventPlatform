@@ -10,10 +10,20 @@ namespace EventPlatform.Controllers
 {
     public class ProfileController : Controller
     {
+        
+
         // GET: /<controller>/
+        [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            @ViewData["Title"] = "Login page";
+            return View("~/Views/Shared/Login.cshtml");
+        }
+        [HttpPost]
+        public IActionResult Login(string username, string password)
+        {
+            ViewData["Username"] = username;
+            return View("~/Views/Shared/Main.cshtml");
         }
     }
 }

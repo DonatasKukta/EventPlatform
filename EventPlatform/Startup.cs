@@ -41,7 +41,12 @@ namespace EventPlatform
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Profile}/{action=Index}");
+            });
         }
     }
 }
