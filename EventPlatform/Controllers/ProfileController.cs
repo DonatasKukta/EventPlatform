@@ -10,8 +10,6 @@ namespace EventPlatform.Controllers
 {
     public class ProfileController : Controller
     {
-        
-
         // GET: /<controller>/
         [HttpGet]
         public IActionResult Index()
@@ -20,9 +18,11 @@ namespace EventPlatform.Controllers
             return View("~/Views/Shared/Login.cshtml");
         }
         [HttpPost]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login(string username, string password, string role)
         {
             ViewData["Username"] = username;
+            ViewData["role"] = role;
+
             return View("~/Views/Shared/Main.cshtml");
         }
     }
