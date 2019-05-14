@@ -21,7 +21,7 @@ namespace EventPlatform.Controllers
         public IActionResult Login(string username, string password, string role)
         {
             ViewData["Username"] = username;
-            ViewData["role"] = role;
+            ViewData["Role"] = role;
 
             return View("~/Views/Shared/Main.cshtml");
         }
