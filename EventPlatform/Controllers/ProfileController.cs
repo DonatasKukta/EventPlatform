@@ -23,6 +23,31 @@ namespace EventPlatform.Controllers
             ViewData["Username"] = username;
             ViewData["Role"] = role;
 
+            //norint kreiptis i DB reikia sukurti konteksta sitaip
+            using (var db = new Models.ModelContext())
+            {
+                if (username != null && password != null)
+                {
+                    Models.User user = new Models.User();
+                    user.Username = username;
+                    user.Password = password;
+                    if (role == "admin")
+                        user.Type = Models.UserType.admin;
+                    else if (role == "organizer")
+                        user.Type = Models.UserType.organizer;
+                    else if (role == "participant")
+                        user.Type = Models.UserType.participant;
+                    db.Add(user); //pridedam elementa i db
+                    db.SaveChanges(); //pridejus reikia daryti saveChanges
+                }
+                //sitaip selectinam visus lenteles elementus
+                foreach (var usr in db.Users)
+                {
+                    ViewData["LoggedInUsers"] += usr.Username + "\n";
+                }
+                ViewData["LoggedInUsersCount"] = db.Users.Count();
+            }
+
             return View("~/Views/Shared/Main.cshtml");
         }
     }
