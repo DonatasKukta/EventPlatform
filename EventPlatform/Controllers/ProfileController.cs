@@ -17,16 +17,45 @@ namespace EventPlatform.Controllers
             @ViewData["Title"] = "Login page";
             return View("~/Views/Shared/Login.cshtml");
         }
-        [HttpPost]
-        public IActionResult Login(string username, string password, string role)
-        {
-            ViewData["Username"] = username;
-            ViewData["Role"] = role;
 
+        [HttpPost]
+        public IActionResult Login(string username, string password)
+        {
+            using (var db = new Models.ModelContext())
+            {
+                var userObj = db.Users.Where(u => u.Username == username).FirstOrDefault();
+                if (userObj == null)
+                {
+                    ViewData["Title"] = "Login page";
+                    return View("~/Views/Shared/Login.cshtml");
+                }
+                foreach (var usr in db.Users)
+                {
+                    ViewData["LoggedInUsers"] += usr.Username + "\n";
+                }
+                ViewData["LoggedInUsersCount"] = db.Users.Count();
+                ViewData["Role"] = Models.User.getType(userObj.Type);
+            }
+            ViewData["Username"] = username;
+            ViewData["Title"] = "Main page";
+
+            return View("~/Views/Shared/Main.cshtml");
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            ViewData["Title"] = "Register page";
+            return View("~/Views/Shared/Register.cshtml");
+        }
+
+        [HttpPost]
+        public IActionResult Register(string email, string username, string password, string role)
+        {
             //norint kreiptis i DB reikia sukurti konteksta sitaip
             using (var db = new Models.ModelContext())
             {
-                if (username != null && password != null)
+                if (email != null && username != null && password != null && role != null)
                 {
                     Models.User user = new Models.User();
                     user.Username = username;
@@ -37,18 +66,15 @@ namespace EventPlatform.Controllers
                         user.Type = Models.UserType.organizer;
                     else if (role == "participant")
                         user.Type = Models.UserType.participant;
+                    else
+                        return View("~/Views/Shared/Register.cshtml");
+
                     db.Add(user); //pridedam elementa i db
                     db.SaveChanges(); //pridejus reikia daryti saveChanges
                 }
-                //sitaip selectinam visus lenteles elementus
-                foreach (var usr in db.Users)
-                {
-                    ViewData["LoggedInUsers"] += usr.Username + "\n";
-                }
-                ViewData["LoggedInUsersCount"] = db.Users.Count();
             }
-
-            return View("~/Views/Shared/Main.cshtml");
+            ViewData["Title"] = "Login page";
+            return View("~/Views/Shared/Login.cshtml");
         }
     }
 }

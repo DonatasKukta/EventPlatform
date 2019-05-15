@@ -1,30 +1,23 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿
 @{
+
+    ViewData["Title"] = "Login";
     Layout = "~/Views/PublicLayout.cshtml";
 }
-
-@*// Saltinis: https://bootsnipp.com/snippets/z8aQr*@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<h2>Login</h2>
 
 <div class="container login-container">
     <form asp-controller="Profile" asp-action="Login" method="post">
         <div class="form-group">
             <label for="UsernameInput">User Name</label>
-            <input name="username"type="text" class="form-control" id="UsernameInput" placeholder="Enter username">
+            <input name="username" type="text" class="form-control" id="UsernameInput" placeholder="Enter username">
         </div>
         <div class="form-group">
             <label for="PasswordInput">Password</label>
-            <input name ="password" type="password" class="form-control" id="PasswordInput" placeholder="Password">
+            <input name="password" type="password" class="form-control" id="PasswordInput" placeholder="Password">
         </div>
-            <label for="admin">Administrator</label>
-            <input type="radio" name="role" id="admin" value="admin"><br>
-            <label for="organizer">Organizer</label>
-            <input type="radio" name="role" id="organizer" value="organizer"><br>
-            <label for="participant">Participant</label>
-            <input type="radio" name="role" id="participant" value="participant"><br><br>
-            <input type="submit" value="Submit">
-            <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" class="btn btn-primary">Login</button>
     </form>
+    <a asp-controller="Profile" asp-action="Register">Užsiregistruoti</a>
 </div>
