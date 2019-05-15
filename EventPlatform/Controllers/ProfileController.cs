@@ -21,27 +21,25 @@ namespace EventPlatform.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            using (var db = new Models.ModelContext())
+            var userObj = Models.User.getUser(username);
+            if (userObj == null)
             {
-                var userObj = db.Users.Where(u => u.Username == username).FirstOrDefault();
-                if (userObj == null)
-                {
-                    ViewData["Title"] = "Login page";
-                    return View("~/Views/Shared/Login.cshtml");
-                }
-                foreach (var usr in db.Users)
-                {
-                    ViewData["LoggedInUsers"] += usr.Username + "\n";
-                }
-                ViewData["LoggedInUsersCount"] = db.Users.Count();
-                ViewData["Role"] = Models.User.getType(userObj.Type);
+                ViewData["Title"] = "Login page";
+                return View("~/Views/Shared/Login.cshtml");
             }
+            var users = Models.User.getUserList();
+            foreach (var usr in users)
+            {
+                ViewData["LoggedInUsers"] += usr.Username + "\n";
+            }
+            ViewData["LoggedInUsersCount"] = users.Count;
+            ViewData["Role"] = Models.User.getType(userObj.Type);
+
             ViewData["Username"] = username;
             ViewData["Title"] = "Main page";
 
             return View("~/Views/Shared/Main.cshtml");
         }
-
         [HttpGet]
         public IActionResult Register()
         {

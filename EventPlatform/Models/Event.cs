@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace EventPlatform.Models
 {
@@ -18,7 +19,16 @@ namespace EventPlatform.Models
         public EventEnum State { get; set; }
 
         public int Duration_id { get; set; }
+
+        public static List<Event> GetEventList()
+        {
+            using (var db = new Models.ModelContext())
+            {
+                return db.Events.ToList();
+            }
+        }
     }
+
 
     public enum EventEnum
     {

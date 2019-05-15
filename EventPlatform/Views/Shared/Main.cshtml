@@ -4,7 +4,15 @@
 @{
     Layout = "~/Views/MainLayout.cshtml";
 }
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 
 
 <hr> Dabar yra prisijungę @ViewData["LoggedInUsersCount"] vartotoju
 <pre>@ViewData["LoggedInUsers"]</pre></hr>
+
+
+@if ("organizer".Equals((string)ViewData["Role"]))
+{
+    <a asp-controller="Event" asp-action="List">Peržiūrėti renginius</a>
+}

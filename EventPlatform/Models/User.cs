@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace EventPlatform.Models
 {
@@ -13,6 +14,36 @@ namespace EventPlatform.Models
         public string Email { get; set; }
         public UserType Type { get; set; }
         public bool isCommentingRight { get; set; }
+
+        public static User getUser(string username)
+        {
+            using (var db = new Models.ModelContext())
+            {
+                return db.Users.Where(u => u.Username == username).FirstOrDefault();
+            }
+        }
+
+        public static List<User> getUserList()
+        {
+            using (var db = new Models.ModelContext())
+            {
+                return db.Users.ToList();
+            }
+        }
+
+        public static string getType(UserType type)
+        {
+            if (type == UserType.admin)
+                return "admin";
+            else if (type == UserType.organizer)
+                return "organizer";
+            else if (type == UserType.participant)
+                return "participant";
+            else if (type == UserType.blocked)
+                return "blocked";
+            else
+                return string.Empty;
+        }
     }
 
     public enum UserType
