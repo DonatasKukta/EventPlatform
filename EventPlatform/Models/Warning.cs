@@ -12,7 +12,7 @@ namespace EventPlatform.Models
         public string Message { get; set; }
         public DateTime Date { get; set; }
 
-        public User From { get; set; }
-        public User To { get; set; }
+        public int From_id { get; set; }
+        public int To_id { get; set; }
     }
 }

@@ -13,8 +13,8 @@ namespace EventPlatform.Models
         public byte[] Image { get; set; }
         public string Annotation { get; set; }
 
-        public User User { get; set; }
-        public Event Event { get; set; }
+        public int User_id { get; set; }
+        public int Event_id { get; set; }
     }
 
     public enum OrderState

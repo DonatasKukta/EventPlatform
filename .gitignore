@@ -330,3 +330,4 @@ ASALocalRun/
 .mfractor/
 /EventPlatform/Models/EventDB.db
 /EventPlatform/Event.db
+/EventPlatform/EventDB.db.sqbpro

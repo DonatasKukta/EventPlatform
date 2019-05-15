@@ -10,7 +10,7 @@ namespace EventPlatform.Models
         [Key]public int Id { get; set; }
         public int Score { get; set; }
 
-        public Event Event { get; set; }
-        public User User { get; set; }
+        public int Event_id { get; set; }
+        public int User_id { get; set; }
     }
 }

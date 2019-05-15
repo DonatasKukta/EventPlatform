@@ -19,6 +19,7 @@ namespace EventPlatform.Models
         public EventEnum State { get; set; }
 
         public int Duration_id { get; set; }
+        public int User_id { get; set; }
 
         public static List<Event> GetEventList()
         {

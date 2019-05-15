@@ -12,7 +12,5 @@ namespace EventPlatform.Models
         public int Hours { get; set; }
         public int Minutes { get; set; }
 
-        //public Event Event { get; set; }
-        public int Event_id { get; set; }
     }
 }

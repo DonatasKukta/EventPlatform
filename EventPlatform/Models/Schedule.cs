@@ -8,7 +8,7 @@ namespace EventPlatform.Models
     public class Schedule
     {
         [Key] public int Id { get; set; }
-        public Event Event { get; set; }
-        public User User { get; set; }
+        public int Event_id { get; set; }
+        public int User_id { get; set; }
     }
 }

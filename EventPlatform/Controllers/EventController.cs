@@ -14,7 +14,7 @@ namespace EventPlatform.Controllers
         public IActionResult List()
         {
             ViewData["EventList"] = Event.GetEventList();
-            return View("~/Views/Shared/EventList.cshtml");
+            return View("~/Views/Shared/EventListView.cshtml");
         }
     }
 }

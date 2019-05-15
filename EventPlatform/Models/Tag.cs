@@ -11,7 +11,7 @@ namespace EventPlatform.Models
         public string Name { get; set; }
         public int Weight { get; set; }
         
-        public User User { get; set; }
-        public Event Event { get; set; }
+        public int User_id { get; set; }
+        public int Event_id { get; set; }
     }
 }
