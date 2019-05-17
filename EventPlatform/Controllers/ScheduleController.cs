@@ -10,10 +10,25 @@ namespace EventPlatform.Controllers
 {
     public class ScheduleController : Controller
     {
-        // GET: /<controller>/
-        public IActionResult Index()
+        [HttpPost]
+        public IActionResult AddToUserSchedule(int eventId, string redirectAction)
         {
-            return View();
+            var insertionResult = Models.Schedule.Insert(eventId, 16);
+            TempData["operationResponse"] = insertionResult.Item1;
+            TempData["operationSucces"] = insertionResult.Item2;
+
+            if (redirectAction.Equals("EventView"))
+            {
+                return RedirectToAction("Index", "Event", new { eventId = eventId });
+            }
+            else if (redirectAction.Equals("EventListView"))
+            {
+                return RedirectToAction("List", "Event");
+            }
+            else //Default action....
+            {
+                return RedirectToAction("Index", "Event", new { eventId = eventId });
+            }
         }
     }
 }
