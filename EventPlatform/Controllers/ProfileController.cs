@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -34,10 +35,12 @@ namespace EventPlatform.Controllers
             }
             ViewData["LoggedInUsersCount"] = users.Count;
             ViewData["Role"] = Models.User.getType(userObj.Type);
-
             ViewData["Username"] = username;
             ViewData["Title"] = "Main page";
 
+            HttpContext.Session.SetInt32("role",(int) userObj.Type);
+            HttpContext.Session.SetInt32("userid", userObj.Id);
+            
             return View("~/Views/Shared/Main.cshtml");
         }
         [HttpGet]
