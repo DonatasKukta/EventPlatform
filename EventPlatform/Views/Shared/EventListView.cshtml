@@ -47,7 +47,12 @@
                 <td>@e.Date</td>
                 <td>@e.Price</td>
                 <td>Prideti</td>
-                <td>Perziureti</td>
+                <td>
+                    <form asp-controller="Event" asp-action="Index" method="get">
+                        <input type="hidden" name="eventId" value="@e.Id">
+                        <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
+                    </form>
+                </td>
             </tr>
             }
         </tbody>

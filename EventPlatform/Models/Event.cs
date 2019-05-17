@@ -21,7 +21,15 @@ namespace EventPlatform.Models
         public int Duration_id { get; set; }
         public int User_id { get; set; }
 
-        public static List<Event> GetEventList(string option)
+        public static Event Select(int eventId)
+        {
+            using (var db = new Models.ModelContext())
+            {
+                return db.Events.Where(e => e.Id.Equals(eventId)).FirstOrDefault();
+            }
+        }
+
+        public static List<Event> SelectList(string option)
         {
             using (var db = new Models.ModelContext())
             {
@@ -44,6 +52,19 @@ namespace EventPlatform.Models
                     return new List<Event>();
                 }
             }
+        }
+        public static string getType(EventEnum type)
+        {
+            if (type == EventEnum.cancelled)
+                return "Atšauktas";
+            else if (type == EventEnum.upcoming)
+                return "Vyksiantis";
+            else if (type == EventEnum.ongoing)
+                return "Vykstantis";
+            else if (type == EventEnum.ended)
+                return "Pasibaigęs";
+            else
+                return string.Empty;
         }
     }
 

@@ -13,8 +13,17 @@ namespace EventPlatform.Controllers
         [HttpGet]
         public IActionResult List(string option = "")
         {
-            ViewData["EventList"] = Event.GetEventList(option);
+            ViewData["EventList"] = Event.SelectList(option);
             return View("~/Views/Shared/EventListView.cshtml");
+        }
+        [HttpGet]
+        public IActionResult Index(int eventId)
+        {
+            var e = Event.Select(eventId);
+            ViewData["Event"] = e;
+            //Set duration
+            ViewData["Organiser"] = EventPlatform.Models.User.getUser(e.User_id).Username;
+            return View("~/Views/Shared/EventView.cshtml");
         }
     }
 }

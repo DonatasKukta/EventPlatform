@@ -1,0 +1,56 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Views/MainLayout.cshtml";
+
+    var e = (EventPlatform.Models.Event)ViewData["Event"];
+    var organiser =(string) ViewData["Organiser"];
+    byte[] byData = e.Image;
+    var base64 = Convert.ToBase64String(byData);
+    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+}
+<div class="container">
+    <form asp-controller="Event" asp-action="List" method="get">
+        <button type="submit" class="btn btn-primary">Grįžti</button>
+    </form>
+</div>
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <img src="@imgSrc" class="rounded mx-auto d-block" alt="Responsive image" style="max-width:100%;" />
+        </div>
+        <div class="col-sm">
+            <h2> @e.Name</h2> <br />
+            <div class="form-group">
+                <label><i>Organizatorius</i></label>
+                <b>@organiser</b>
+            </div>
+            <div class="form-group">
+                <label><i>Vieta</i></label>
+                <b>@e.Place</b>
+            </div>
+            <div class="form-group">
+                <label><i>Data</i></label>
+                <b>@e.Date</b>
+            </div>
+            <div class="form-group">
+                <label><i>Trukmė</i></label>
+                <b></b>
+            </div>
+            <div class="form-group">
+                <label><i>Būsena</i></label>
+                <b>@EventPlatform.Models.Event.getType(e.State)</b>
+            </div>
+        </div>
+        </div>
+    <br />
+    <h3 class="text-center">Aprašymas</h3>
+    <div class="row">
+        <p class="text-center">@e.Description</p>
+    </div>
+</div>
+
+
