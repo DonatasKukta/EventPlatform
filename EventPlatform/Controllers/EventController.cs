@@ -13,12 +13,18 @@ namespace EventPlatform.Controllers
         [HttpGet]
         public IActionResult List(string option = "")
         {
+            ViewData["operationResponse"]= TempData["operationResponse"] == null ? null : (string)TempData["operationResponse"];
+            ViewData["operationSucces"] = TempData["operationSucces"] == null ? false : (bool)TempData["operationSucces"];
+
             ViewData["EventList"] = Event.SelectList(option);
             return View("~/Views/Shared/EventListView.cshtml");
         }
         [HttpGet]
         public IActionResult Index(int eventId)
         {
+            ViewData["operationResponse"] = TempData["operationResponse"] == null ? null : (string)TempData["operationResponse"];
+            ViewData["operationSucces"] = TempData["operationSucces"] == null ? false : (bool)TempData["operationSucces"];
+            
             var e = Event.Select(eventId);
             ViewData["Event"] = e;
             //Set duration
