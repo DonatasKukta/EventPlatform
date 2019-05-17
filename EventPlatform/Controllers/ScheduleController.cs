@@ -22,7 +22,7 @@ namespace EventPlatform.Controllers
                 throw new UnauthorizedAccessException("Vartotojui prieiga nesuteikta");
             }
 
-            var insertionResult = Models.Schedule.Insert(eventId, 16);
+            var insertionResult = Models.Schedule.Insert(eventId, (int) HttpContext.Session.GetInt32("userid"));
             TempData["operationResponse"] = insertionResult.Item1;
             TempData["operationSucces"] = insertionResult.Item2;
 
