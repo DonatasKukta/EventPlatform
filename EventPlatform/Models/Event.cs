@@ -21,11 +21,28 @@ namespace EventPlatform.Models
         public int Duration_id { get; set; }
         public int User_id { get; set; }
 
-        public static List<Event> GetEventList()
+        public static List<Event> GetEventList(string option)
         {
             using (var db = new Models.ModelContext())
             {
-                return db.Events.ToList();
+                if (option.Equals(""))
+                {
+                    return db.Events.ToList();
+                }
+                else if(option.Equals("ended"))
+                {
+                    var currDate = DateTime.Today;
+                    return db.Events.Where( e => e.Date < currDate).ToList();
+                }
+                else if (option.Equals("upcoming"))
+                {
+                    var currDate = DateTime.Today;
+                    return db.Events.Where(e => e.Date >= currDate).ToList();
+                }
+                else
+                {
+                    return new List<Event>();
+                }
             }
         }
     }

@@ -6,6 +6,26 @@
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <h2>EventListView</h2>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Filtruoti
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <form asp-controller="Event" asp-action="List" method="get">
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Visi">
+        </form>
+        <form asp-controller="Event" asp-action="List" method="get">
+            <input type="hidden" name="option" value="upcoming"><br>
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Artėjantys">
+        </form>
+        <form asp-controller="Event" asp-action="List" method="get">
+            <input type="hidden" name="option" value="ended"><br>
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Pasibaigę">
+        </form>
+    </div>
+</div>
+<br />
 <div class="container">
     <table class="table">
         <thead>
