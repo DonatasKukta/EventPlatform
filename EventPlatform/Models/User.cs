@@ -22,6 +22,13 @@ namespace EventPlatform.Models
                 return db.Users.Where(u => u.Username == username).FirstOrDefault();
             }
         }
+        public static User getUser(int id)
+        {
+            using (var db = new Models.ModelContext())
+            {
+                return db.Users.Where(u => u.Id == id).FirstOrDefault();
+            }
+        }
 
         public static List<User> getUserList()
         {
