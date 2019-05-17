@@ -51,6 +51,20 @@ namespace EventPlatform.Models
             else
                 return string.Empty;
         }
+
+        public static bool isNormalUser(UserType type)
+        {
+            if (type == UserType.admin)
+                return true;
+            else if (type == UserType.organizer)
+                return true;
+            else if (type == UserType.participant)
+                return true;
+            else if (type == UserType.blocked)
+                return false;
+            else
+                return false;
+        }
     }
 
     public enum UserType
