@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewData["Title"] = "EventListView";
+    var promotions = (List<EventPlatform.Models.Promotion>)ViewData["PromotionList"];
+    var organizerName = (string)ViewData[""];
+    var eventName = (string)ViewData[""];
+    Layout = "~/Views/MainLayout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<h2>PromotionListView</h2>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Filtruoti
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <form asp-controller="Promotion" asp-action="List" method="get">
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Visi">
+        </form>
+        <form asp-controller="Promotion" asp-action="List" method="get">
+            <input type="hidden" name="option" value="0"><br>
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Patvirinti">
+        </form>
+        <form asp-controller="Promotion" asp-action="List" method="get">
+            <input type="hidden" name="option" value="1"><br>
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Laukiantys patvirtinimo">
+        </form>
+        <form asp-controller="Promotion" asp-action="List" method="get">
+            <input type="hidden" name="option" value="2"><br>
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Atšaukti">
+        </form>
+    </div>
+</div>
+<br />
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Organizatorius</th>
+                <th scope="col">Renginys</th>
+                <th scope="col">Būsena</th>
+                <th scope="col">Nuoroda</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in promotions)
+            {
+                <tr>
+                    <td>@p.User_id</td>
+                    <td>@p.Event_id</td>
+                    <td>@EventPlatform.Models.Promotion.getStateString(p.State)</td>
+                    <td>
+                        <form asp-controller="Promotion" asp-action="Promotion" method="get">
+                            <input type="hidden" name="promotionId" value="@p.Id">
+                            <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
