@@ -33,7 +33,7 @@ namespace EventPlatform.Models
         {
             using (var db = new Models.ModelContext())
             {
-                if (option.Equals(""))
+                if (option == null || option.Equals(""))
                 {
                     return db.Events.ToList();
                 }
