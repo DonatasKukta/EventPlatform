@@ -1,0 +1,90 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Views/MainLayout.cshtml";
+
+    var p = (EventPlatform.Models.Promotion)ViewData["Promotion"];
+    var organiserName = (string)ViewData["organiserName"];
+    var eventName = (string)ViewData["eventName"];
+    byte[] byData = p.Image;
+    var base64 = Convert.ToBase64String(byData);
+    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+    var responseMessage = ViewData["ResponseMessage"] == null ? null : (string)ViewData["ResponseMessage"];
+
+}
+<div class="container">
+    <form asp-controller="Promotion" asp-action="List" method="get">
+        <button type="submit" class="btn btn-primary">Grįžti</button>
+    </form>
+
+</div>
+<br />
+<div class="container">
+    @if (responseMessage != null)
+    {
+        <div class="p-3 mb-2 bg-warning text-white">@responseMessage</div>
+    }
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <img src="@imgSrc" class="rounded mx-auto d-block" alt="Responsive image" style="max-width:100%;" />
+        </div>
+        <div class="col-sm">
+            <h3>Reklamos užsakymas nr. @p.Id</h3> <br />
+            <div class="form-group">
+                <label><i>Organizatorius</i></label>
+                <b>@organiserName</b>
+            </div>
+            <div class="form-group">
+                <label><i>Renginio pavadinimas</i></label>
+                <b>@eventName</b>
+            </div>
+            <div class="form-group">
+                <label><i>Data</i></label>
+                <b>@p.Date</b>
+            </div>
+            <div class="form-group">
+                <label><i>Būsena</i></label>
+                <b>@EventPlatform.Models.Promotion.getStateString(p.State)</b>
+            </div>
+            <div class="form-group">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Keisti būseną
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <div class="dropdown-item">
+                            <form asp-controller="Promotion" asp-action="UpdateState" method="post">
+                                <input type="hidden" name="promotionId" value="@p.Id">
+                                <input type="hidden" name="newState" value="0">
+                                <input class="btn btn-secondary dropdown-item" type="submit" value="Patvirtintas">
+                            </form>
+                        </div>
+                        <div class="dropdown-item">
+                            <form asp-controller="Promotion" asp-action="UpdateState" method="post">
+                                <input type="hidden" name="promotionId" value="@p.Id">
+                                <input type="hidden" name="newState" value="1">
+                                <input class="btn btn-secondary dropdown-item" type="submit" value="Laukiantis patvirtinimo">
+                            </form>
+                        </div>
+                        <div class="dropdown-item">
+                            <form asp-controller="Promotion" asp-action="UpdateState" method="post">
+                                <input type="hidden" name="promotionId" value="@p.Id">
+                                <input type="hidden" name="newState" value="2">
+                                <input class="btn btn-secondary dropdown-item" type="submit" value="Atšauktas">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <h3 class="text-center">Anotacija</h3>
+    <div class="row">
+        <p class="text-center">@p.Annotation</p>
+    </div>
+</div>
