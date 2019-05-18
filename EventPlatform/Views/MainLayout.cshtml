@@ -3,6 +3,8 @@
 *@
 @{
 }
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,16 +24,15 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand"> Home</a>
-            <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-item nav-link" asp-area="" asp-controller="" asp-action="Kazkas">Cia linkas i kazkur</a>
-                    </li>
-                </ul>
-                <span class="navbar-text">Logged in as user @ViewData["Username"] [@ViewData["Role"]]</span>
-            </div>
-</nav>
+        <a class="navbar-brand" asp-controller="Profile" asp-action="Main"> Home</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                </li>
+            </ul>
+            <span class="navbar-text">Logged in as user @ViewData["Username"] [@ViewData["Role"]]</span>
+        </div>
+    </nav>
 
     <div class="container">
 
