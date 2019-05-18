@@ -19,7 +19,7 @@ namespace EventPlatform.Controllers
             bool isRoleSet = HttpContext.Session.TryGetValue("role", out arr);
             if (!(isRoleSet && Models.User.isNormalUser((UserType)HttpContext.Session.GetInt32("role"))))
             {
-                throw new UnauthorizedAccessException("Vartotojui prieiga nesuteikta");
+                return RedirectToAction("Index", "Profile");
             }
 
             var insertionResult = Models.Schedule.Insert(eventId, (int) HttpContext.Session.GetInt32("userid"));

@@ -43,7 +43,21 @@ namespace EventPlatform.Controllers
             
             return View("~/Views/Shared/Main.cshtml");
         }
+
         [HttpGet]
+        public IActionResult Main()
+        {
+            byte[] arr;
+            bool isRoleSet = HttpContext.Session.TryGetValue("role", out arr);
+            if (!(isRoleSet && Models.User.isNormalUser((Models.UserType)HttpContext.Session.GetInt32("role"))))
+            {
+                return RedirectToAction("Index", "Profile");
+            }
+            return View("~/Views/Shared/Main.cshtml");
+        }
+           
+
+    [HttpGet]
         public IActionResult Register()
         {
             ViewData["Title"] = "Register page";
@@ -72,6 +86,10 @@ namespace EventPlatform.Controllers
 
                     db.Add(user); //pridedam elementa i db
                     db.SaveChanges(); //pridejus reikia daryti saveChanges
+                }
+                else
+                {
+                    return View("~/Views/Shared/Register.cshtml");
                 }
             }
             ViewData["Title"] = "Login page";
