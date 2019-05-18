@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace EventPlatform.Controllers
@@ -28,12 +29,6 @@ namespace EventPlatform.Controllers
                 ViewData["Title"] = "Login page";
                 return View("~/Views/Shared/Login.cshtml");
             }
-            var users = Models.User.getUserList();
-            foreach (var usr in users)
-            {
-                ViewData["LoggedInUsers"] += usr.Username + "\n";
-            }
-            ViewData["LoggedInUsersCount"] = users.Count;
             ViewData["Role"] = Models.User.getType(userObj.Type);
             ViewData["Username"] = username;
             ViewData["Title"] = "Main page";
@@ -53,6 +48,9 @@ namespace EventPlatform.Controllers
             {
                 return RedirectToAction("Index", "Profile");
             }
+            ViewData["Role"] = Models.User.getType((Models.UserType)HttpContext.Session.GetInt32("role"));
+            ViewData["Username"] = Models.User.getUser((int)HttpContext.Session.GetInt32("userid")).Username;
+
             return View("~/Views/Shared/Main.cshtml");
         }
            
