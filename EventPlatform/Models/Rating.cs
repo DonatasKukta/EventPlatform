@@ -33,7 +33,7 @@ namespace EventPlatform.Models
                     avgRating += rating.Score;
                 }
 
-                return avgRating / ratings.Count();
+                return (double)avgRating / ratings.Count();
             }
         }
 

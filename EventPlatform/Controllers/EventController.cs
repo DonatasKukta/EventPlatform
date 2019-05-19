@@ -44,7 +44,10 @@ namespace EventPlatform.Controllers
             var ru = Rating.Select(eventId, (int)HttpContext.Session.GetInt32("userid"));
             var r = Rating.GetRating(eventId);
             ViewData["Event"] = e;
-            ViewData["RatingUser"] = ru;
+            if (ru == null)
+                ViewData["RatingUser"] = 0;
+            else ViewData["RatingUser"] = ru.Score;
+
             ViewData["Rating"] = r;
             //Set duration
             ViewData["Organiser"] = EventPlatform.Models.User.getUser(e.User_id).Username;

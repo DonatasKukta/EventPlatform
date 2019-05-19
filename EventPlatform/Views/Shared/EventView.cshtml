@@ -6,9 +6,8 @@
     Layout = "~/Views/MainLayout.cshtml";
 
     var e = (EventPlatform.Models.Event)ViewData["Event"];
-    var r = (EventPlatform.Models.Rating)ViewData["RatingUser"];
-    var rating = ViewData["Rating"];
-    var ratingValue = r.Score;
+    var ratingValue = (int)ViewData["RatingUser"];
+    var rating = (double)ViewData["Rating"];
     var organiser = (string)ViewData["Organiser"];
     byte[] byData = e.Image;
     var base64 = Convert.ToBase64String(byData);
