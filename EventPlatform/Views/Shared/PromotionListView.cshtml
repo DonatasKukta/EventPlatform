@@ -1,0 +1,87 @@
+﻿@using EventPlatform.Models
+
+@{
+    ViewData["Title"] = "EventListView";
+    var promotions = (List<Tuple<Promotion, string, string>>)ViewData["PromotionList"];
+    var role = ViewData["role"];
+    Layout = "~/Views/MainLayout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<h2>PromotionListView</h2>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Filtruoti
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <form asp-controller="Promotion" asp-action="List" method="get">
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Visi">
+        </form>
+        <form asp-controller="Promotion" asp-action="List" method="get">
+            <input type="hidden" name="option" value="0"><br>
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Patvirinti">
+        </form>
+        <form asp-controller="Promotion" asp-action="List" method="get">
+            <input type="hidden" name="option" value="1"><br>
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Laukiantys patvirtinimo">
+        </form>
+        <form asp-controller="Promotion" asp-action="List" method="get">
+            <input type="hidden" name="option" value="2"><br>
+            <input class="btn btn-secondary dropdown-item" type="submit" value="Atšaukti">
+        </form>
+    </div>
+</div>
+<br />
+@if ((int)role == 3)
+{
+    <div class="add-event">
+        <form asp-controller="Promotion" asp-action="AddPromotion" method="get">
+            <input class="btn btn-primary" type="submit" value="Pridėti naują reklamą">
+        </form>
+    </div>
+}
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Užsakymo nr.</th>
+                <th scope="col">Renginys</th>
+                <th scope="col">Būsena</th>
+                @if ((int)ViewData["role"] == 0)
+                {
+                    <th scope="col">Nuoroda</th>
+                }
+                @if ((int)ViewData["role"] == 3)
+                {
+                    <th scope="col">Atšaukti></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in promotions)
+            {
+                <tr>
+                    <td>@p.Item1.Id</td>
+                    <td>@p.Item3</td>
+                    <td>@Promotion.getStateString(p.Item1.State)</td>
+                    <td>
+                        @if ((int)ViewData["role"] == 0)
+                        {
+                            <form asp-controller="Promotion" asp-action="Promotion" method="get">
+                                <input type="hidden" name="promotionId" value="@p.Item1.Id">
+                                <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
+                            </form>
+                        }
+                        @if ((int)ViewData["role"] == 3)
+                        {
+                            <form asp-controller="Promotion" asp-action="Remove" method="post">
+                                <input type="hidden" name="promotionId" value="@p.Item1.Id">
+                                <input class="btn btn-secondary dropdown-item" type="submit" value="Pašalinti">
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

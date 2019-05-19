@@ -20,8 +20,26 @@
     <form asp-controller="Event" asp-action="List" method="get">
         <button type="submit" class="btn btn-primary">Grįžti</button>
     </form>
-
 </div>
+
+@if ((int)ViewData["role"] == 3)
+{
+    <div class="container">
+        <form asp-controller="Event" asp-action="Remove" method="post">
+            <input type="hidden" name="eventId" value="@e.Id">
+            <button type="submit" class="btn btn-primary">Pašalinti</button>
+        </form>
+    </div>
+}
+@if ((int)ViewData["role"] == 3)
+{
+    <div class="container">
+        <form asp-controller="Event" asp-action="Edit" method="get">
+            <input type="hidden" name="eventId" value="@e.Id">
+            <button type="submit" class="btn btn-primary">Redaguoti</button>
+        </form>
+    </div>
+}
 <br />
 <div class="container">
     @if (responseMessage != null && responseSucces == true)
@@ -56,33 +74,84 @@
                 <label><i>Trukmė</i></label>
                 <b></b>
             </div>
-            <div class="form-group">
-                <label><i>Būsena</i></label>
-                <b>@EventPlatform.Models.Event.getType(e.State)</b>
-            </div>
+            @if ((int)ViewData["role"] == 2)
+            {
+                <div class="form-group">
+                    <label><i>Būsena</i></label>
+                    <b>@EventPlatform.Models.Event.getType(e.State)</b>
+                </div>
+            }
+            @if ((int)ViewData["role"] == 3)
+            {
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Keisti būseną
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div class="dropdown-item">
+                                <form asp-controller="Event" asp-action="UpdateState" method="post">
+                                    <input type="hidden" name="eventId" value="@e.Id">
+                                    <input type="hidden" name="newState" value="1">
+                                    <input class="btn btn-secondary dropdown-item" type="submit" value="Ateinantis">
+                                </form>
+                            </div>
+                            <div class="dropdown-item">
+                                <form asp-controller="Event" asp-action="UpdateState" method="post">
+                                    <input type="hidden" name="eventId" value="@e.Id">
+                                    <input type="hidden" name="newState" value="3">
+                                    <input class="btn btn-secondary dropdown-item" type="submit" value="Pasibaigęs">
+                                </form>
+                            </div>
+                            <div class="dropdown-item">
+                                <form asp-controller="Event" asp-action="UpdateState" method="post">
+                                    <input type="hidden" name="eventId" value="@e.Id">
+                                    <input type="hidden" name="newState" value="0">
+                                    <input class="btn btn-secondary dropdown-item" type="submit" value="Atšauktas">
+                                </form>
+                            </div>
+                            <div class="dropdown-item">
+                                <form asp-controller="Event" asp-action="UpdateState" method="post">
+                                    <input type="hidden" name="eventId" value="@e.Id">
+                                    <input type="hidden" name="newState" value="2">
+                                    <input class="btn btn-secondary dropdown-item" type="submit" value="Vykstantis">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            
             <div class="form-group">
                 <label><i>Renginio įvertinimas</i></label>
                 <b>@rating/5</b>
-                <form asp-controller="Rating" asp-action="AddRating" method="post">
-                    <input type="hidden" name="eventId" value="@e.Id">
-                    <input type="hidden" name="redirectAction" value="EventView">
-                    <select name="ratingValue" onchange="if (this.value != 0) { this.form.submit(); }">
-                        <option value="0">Įvertinti renginį</option>
-                        <option value="5" selected="@(ratingValue == 5)">5</option>
-                        <option value="4" selected="@(ratingValue == 4)">4</option>
-                        <option value="3" selected="@(ratingValue == 3)">3</option>
-                        <option value="2" selected="@(ratingValue == 2)">2</option>
-                        <option value="1" selected="@(ratingValue == 1)">1</option>
-                    </select>
-                </form>
+                @if ((int)ViewData["role"] == 2)
+                {
+                    <form asp-controller="Rating" asp-action="AddRating" method="post">
+                        <input type="hidden" name="eventId" value="@e.Id">
+                        <input type="hidden" name="redirectAction" value="EventView">
+                        <select name="ratingValue" onchange="if (this.value != 0) { this.form.submit(); }">
+                            <option value="0">Įvertinti renginį</option>
+                            <option value="5" selected="@(ratingValue == 5)">5</option>
+                            <option value="4" selected="@(ratingValue == 4)">4</option>
+                            <option value="3" selected="@(ratingValue == 3)">3</option>
+                            <option value="2" selected="@(ratingValue == 2)">2</option>
+                            <option value="1" selected="@(ratingValue == 1)">1</option>
+                        </select>
+                    </form>
+                }
             </div>
-            <div class="form-group">
-                <form asp-controller="Schedule" asp-action="AddToUserSchedule" method="post">
-                    <input type="hidden" name="eventId" value="@e.Id">
-                    <input type="hidden" name="redirectAction" value="EventView">
-                    <input class="btn btn-secondary dropdown-item" type="submit" value="Pridėti į tvarkaraštį">
-                </form>
-            </div>
+            
+            @if ((int)ViewData["role"] == 2)
+            {
+                <div class="form-group">
+                    <form asp-controller="Schedule" asp-action="AddToUserSchedule" method="post">
+                        <input type="hidden" name="eventId" value="@e.Id">
+                        <input type="hidden" name="redirectAction" value="EventView">
+                        <input class="btn btn-secondary dropdown-item" type="submit" value="Pridėti į tvarkaraštį">
+                    </form>
+                </div>
+            }
         </div>
     </div>
     <br />

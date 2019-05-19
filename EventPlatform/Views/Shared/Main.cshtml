@@ -9,7 +9,13 @@
 @if ("participant".Equals((string)ViewData["Role"]))
 {
     <a asp-controller="Event" asp-action="List">Peržiūrėti renginius</a>
-} else if ("admin".Equals((string)ViewData["Role"]))
+}
+else if ("admin".Equals((string)ViewData["Role"]))
 {
     <a asp-controller="Promotion" asp-action="List">Peržiūrėti reklamų užsakymus</a>
+}
+else if ("organizer".Equals((string)ViewData["Role"]))
+{
+    <a asp-controller="Promotion" asp-action="List">Peržiūrėti reklamų užsakymus</a>
+    <a asp-controller="Event" asp-action="List">Valdyti renginius</a>
 }

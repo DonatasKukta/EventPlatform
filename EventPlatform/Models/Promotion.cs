@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Session;
+using Microsoft.AspNetCore.Http;
 
 namespace EventPlatform.Models
 {
@@ -17,39 +19,77 @@ namespace EventPlatform.Models
         public int User_id { get; set; }
         public int Event_id { get; set; }
 
-        public static List<Tuple<Promotion,string,string>> SelectList(int option)
+        public static List<Tuple<Promotion,string,string>> SelectList(int option, int option2)
         {
             using (var db = new Models.ModelContext())
             {
-                if (0 <= option && option < 3)
+                if (option2 == (int)Models.UserType.admin)
                 {
-                    var list = (from pr in db.Promotions
-                                join usr in db.Users on pr.User_id equals usr.Id
-                                join ev in db.Events on pr.Event_id equals ev.Id
-                                where pr.State == (OrderState) option
-                                select new Tuple<Promotion, string, string>
-                                (
-                                    pr,
-                                    usr.Username,
-                                    ev.Name
-                                )
-                                ).ToList();
-                    return list;
+                    if (0 <= option && option < 3)
+                    {
+                        var list = (from pr in db.Promotions
+                                    join usr in db.Users on pr.User_id equals usr.Id
+                                    join ev in db.Events on pr.Event_id equals ev.Id
+                                    where pr.State == (OrderState)option
+                                    select new Tuple<Promotion, string, string>
+                                    (
+                                        pr,
+                                        usr.Username,
+                                        ev.Name
+                                    )
+                                    ).ToList();
+                        return list;
 
+                    }
+                    else
+                    {
+                        var list = (from pr in db.Promotions
+                                    join usr in db.Users on pr.User_id equals usr.Id
+                                    join ev in db.Events on pr.Event_id equals ev.Id
+                                    select new Tuple<Promotion, string, string>
+                                    (
+                                        pr,
+                                        usr.Username,
+                                        ev.Name
+                                    )
+                                    ).ToList();
+                        return list;
+                    }
                 }
                 else
                 {
-                    var list = (from pr in db.Promotions
-                                join usr in db.Users on pr.User_id equals usr.Id
-                                join ev in db.Events on pr.Event_id equals ev.Id
-                                select new Tuple<Promotion, string, string>
-                                (
-                                    pr,
-                                    usr.Username,
-                                    ev.Name
-                                )
-                                ).ToList();
-                    return list;
+                    if (0 <= option && option < 3)
+                    {
+                        var list = (from pr in db.Promotions
+                                    join usr in db.Users on pr.User_id equals usr.Id
+                                    join ev in db.Events on pr.Event_id equals ev.Id
+                                    where pr.State == (OrderState)option
+                                    where usr.Id == option2
+                                    select new Tuple<Promotion, string, string>
+                                    (
+                                        pr,
+                                        usr.Username,
+                                        ev.Name
+                                    )
+                                    ).ToList();
+                        return list;
+
+                    }
+                    else
+                    {
+                        var list = (from pr in db.Promotions
+                                    join usr in db.Users on pr.User_id equals usr.Id
+                                    join ev in db.Events on pr.Event_id equals ev.Id
+                                    where usr.Id == option2
+                                    select new Tuple<Promotion, string, string>
+                                    (
+                                        pr,
+                                        usr.Username,
+                                        ev.Name
+                                    )
+                                    ).ToList();
+                        return list;
+                    }
                 }
             }
         }
@@ -97,6 +137,30 @@ namespace EventPlatform.Models
                     return "Neteisinga užsakymo būsena";
             }
         }
+
+        public static string Delete(int promotionId)
+        {
+            using (var db = new Models.ModelContext())
+            {
+              
+                var currPromotion = db.Promotions.FirstOrDefault(p => p.Id.Equals(promotionId));
+                db.Promotions.Attach(currPromotion);
+                db.Promotions.Remove(currPromotion);
+                db.SaveChanges();
+                return "Sėkmingai pašalinta reklama";
+
+            }
+        }
+        public static string Insert(Promotion promotion)
+        {
+            using (var db = new ModelContext())
+            {
+                db.Promotions.Add(promotion);
+                db.SaveChanges();
+                return "Sėkmingai pridėta reklama";
+            }
+        }
+
         public static string getStateString(OrderState state)
         {
             if (OrderState.approved == state)

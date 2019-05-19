@@ -1,0 +1,104 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "~/Views/MainLayout.cshtml";
+
+    var userId = ViewData["userid"];
+    var e = (EventPlatform.Models.Event)ViewData["Event"];
+    DateTime duration = DateTime.Today;
+    if (e != null)
+    {
+         duration = e.Date.Add(e.Duration);
+    }
+
+
+}
+<div class="container">
+    <form asp-controller="Event" asp-action="List" method="get">
+        <button type="submit" class="btn btn-primary">Grįžti</button>
+    </form>
+
+</div>
+
+<br />
+
+<div class="container">
+    @if (e == null)
+    {
+        <form asp-controller="Event" asp-action="Add" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="NameInput">Name</label>
+                <input name="name" type="text" class="form-control" id="NameInput" placeholder="Enter name">
+            </div>
+            <div class="form-group">
+                <label for="DescriptionInput">Description</label>
+                <input name="description" type="text" class="form-control" id="DescriptionInput" placeholder="Description">
+            </div>
+            <div class="form-group">
+                <label for="AnnotationInput">Annotation</label>
+                <input name="annotation" type="text" class="form-control" id="AnnotationInput" placeholder="Annotation">
+            </div>
+            <div class="form-group">
+                <label for="DateInput">Date</label>
+                <input name="date" type="datetime" class="form-control" id="DateInput" placeholder="Date">
+            </div>
+            <div class="form-group">
+                <label for="ImageInput">Image</label>
+                <input name="image" type="file" class="form-control" id="ImageInput" placeholder="Image">
+            </div>
+            <div class="form-group">
+                <label for="PlaceInput">Place</label>
+                <input name="place" type="text" class="form-control" id="PlaceInput" placeholder="Place">
+            </div>
+            <div class="form-group">
+                <label for="PriceInput">Price</label>
+                <input name="price" type="number" min="0" step="any" value="0" class="form-control" id="PriceInput" placeholder="Price">
+            </div>
+            <div class="form-group">
+                <label for="DurationInput">Duration</label>
+                <input name="duration" type="datetime-local" class="form-control" id="DurationInput" placeholder="Duration">
+            </div>
+            <button type="submit" class="btn btn-primary">Pridėti</button>
+        </form>
+    }
+    @if (e != null)
+    {
+        <form asp-controller="Event" asp-action="EditEvent" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="NameInput">Name</label>
+                <input name="name" type="text" class="form-control" id="NameInput" placeholder="Enter name" value="@e.Name">
+            </div>
+            <div class="form-group">
+                <label for="DescriptionInput">Description</label>
+                <input name="description" type="text" class="form-control" id="DescriptionInput" placeholder="Description" value="@e.Description">
+            </div>
+            <div class="form-group">
+                <label for="AnnotationInput">Annotation</label>
+                <input name="annotation" type="text" class="form-control" id="AnnotationInput" placeholder="Annotation" value="@e.Annotation">
+            </div>
+            <div class="form-group">
+                <label for="DateInput">Date</label>
+                <input name="date" type="datetime" class="form-control" id="DateInput" placeholder="Date" value="@e.Date">
+            </div>
+            <div class="form-group">
+                <label for="PlaceInput">Place</label>
+                <input name="place" type="text" class="form-control" id="PlaceInput" placeholder="Place" value="@e.Place">
+            </div>
+            <div class="form-group">
+                <label for="PriceInput">Price</label>
+                <input name="price" type="number" min="0" step="any" value="@e.Price" class="form-control" id="PriceInput" placeholder="Price" >
+            </div>
+            <div class="form-group">
+                <label for="DurationInput">Duration</label>
+                <input type="hidden" name="eventId" value="@e.Id">
+                <input name="duration" type="datetime" class="form-control" id="DurationInput" placeholder="Duration" value="@duration">
+            </div>
+            <button type="submit" class="btn btn-primary">Redaguoti</button>
+        </form>
+    }
+    <br />
+</div>
+
+

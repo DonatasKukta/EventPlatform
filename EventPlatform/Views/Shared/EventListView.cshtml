@@ -1,9 +1,10 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "EventListView";
     var events = (List<EventPlatform.Models.Event>)ViewData["EventList"];
     var responseMessage = ViewData["operationResponse"] == null ? null : (string)ViewData["operationResponse"];
     bool responseSucces = ViewData["operationSucces"] == null ? false : (bool)ViewData["operationSucces"];
+    var role = (int)ViewData["role"];
+    var user = (int)ViewData["userid"];
 
     Layout = "~/Views/MainLayout.cshtml";
 }
@@ -28,6 +29,14 @@
         </form>
     </div>
 </div>
+@if(role == 3)
+{
+    <div class="add-event">
+        <form asp-controller="Event" asp-action="AddEvent" method="get">
+            <input class="btn btn-primary" type="submit" value="Pridėti naują renginį">
+        </form>
+    </div>
+}
 <br />
 @if (responseMessage != null && responseSucces == true)
 {
@@ -46,23 +55,27 @@ else if (responseMessage != null && responseSucces == false)
                 <th scope="col">Pradžia</th>
                 <th scope="col">Kaina</th>
                 <th scope="col">Nuoroda</th>
-                <th scope="col">Pridėti</th>
+                @if (role == 2)
+                {<th scope="col">Pridėti</th> 
+                }
             </tr>
         </thead>
         <tbody>
             @foreach (var e in events)
             {
-                <tr>
-                    <td>@e.Name</td>
-                    <td>@e.Place</td>
-                    <td>@e.Date</td>
-                    <td>@e.Price</td>
-                    <td>
-                        <form asp-controller="Event" asp-action="Index" method="get">
-                            <input type="hidden" name="eventId" value="@e.Id">
-                            <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
-                        </form>
-                    </td>
+            <tr>
+                <td>@e.Name</td>
+                <td>@e.Place</td>
+                <td>@e.Date</td>
+                <td>@e.Price</td>
+                <td>
+                    <form asp-controller="Event" asp-action="Index" method="get">
+                        <input type="hidden" name="eventId" value="@e.Id">
+                        <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
+                    </form>
+                </td>
+                @if (role == 2)
+                {
                     <td>
                         <form asp-controller="Schedule" asp-action="AddToUserSchedule" method="post">
                             <input type="hidden" name="eventId" value="@e.Id">
@@ -70,7 +83,8 @@ else if (responseMessage != null && responseSucces == false)
                             <input class="btn btn-secondary dropdown-item" type="submit" value="Pridėti į tvarkaraštį">
                         </form>
                     </td>
-                </tr>
+                }
+            </tr>
             }
         </tbody>
     </table>
