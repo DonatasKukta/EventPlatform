@@ -1,9 +1,8 @@
-﻿
+﻿@using EventPlatform.Models
+
 @{
     ViewData["Title"] = "EventListView";
-    var promotions = (List<EventPlatform.Models.Promotion>)ViewData["PromotionList"];
-    var organizerName = (string)ViewData[""];
-    var eventName = (string)ViewData[""];
+    var promotions = (List<Tuple<Promotion, string, string>>)ViewData["PromotionList"];
     Layout = "~/Views/MainLayout.cshtml";
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -36,6 +35,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th scope="col">Užsakymo nr.</th>
                 <th scope="col">Organizatorius</th>
                 <th scope="col">Renginys</th>
                 <th scope="col">Būsena</th>
@@ -45,17 +45,18 @@
         <tbody>
             @foreach (var p in promotions)
             {
-                <tr>
-                    <td>@p.User_id</td>
-                    <td>@p.Event_id</td>
-                    <td>@EventPlatform.Models.Promotion.getStateString(p.State)</td>
-                    <td>
-                        <form asp-controller="Promotion" asp-action="Promotion" method="get">
-                            <input type="hidden" name="promotionId" value="@p.Id">
-                            <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
-                        </form>
-                    </td>
-                </tr>
+            <tr>
+                <td>@p.Item1.Id</td>
+                <td>@p.Item2</td>
+                <td>@p.Item3</td>
+                <td>@Promotion.getStateString(p.Item1.State)</td>
+                <td>
+                    <form asp-controller="Promotion" asp-action="Promotion" method="get">
+                        <input type="hidden" name="promotionId" value="@p.Item1.Id">
+                        <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
+                    </form>
+                </td>
+            </tr>
             }
         </tbody>
     </table>

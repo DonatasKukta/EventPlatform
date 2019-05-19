@@ -17,17 +17,39 @@ namespace EventPlatform.Models
         public int User_id { get; set; }
         public int Event_id { get; set; }
 
-        public static List<Promotion> SelectList(int option)
+        public static List<Tuple<Promotion,string,string>> SelectList(int option)
         {
             using (var db = new Models.ModelContext())
             {
                 if (0 <= option && option < 3)
                 {
-                    return db.Promotions.Where(e => e.State==(OrderState)option).ToList();
+                    var list = (from pr in db.Promotions
+                                join usr in db.Users on pr.User_id equals usr.Id
+                                join ev in db.Events on pr.Event_id equals ev.Id
+                                where pr.State == (OrderState) option
+                                select new Tuple<Promotion, string, string>
+                                (
+                                    pr,
+                                    usr.Username,
+                                    ev.Name
+                                )
+                                ).ToList();
+                    return list;
+
                 }
                 else
                 {
-                    return db.Promotions.ToList();
+                    var list = (from pr in db.Promotions
+                                join usr in db.Users on pr.User_id equals usr.Id
+                                join ev in db.Events on pr.Event_id equals ev.Id
+                                select new Tuple<Promotion, string, string>
+                                (
+                                    pr,
+                                    usr.Username,
+                                    ev.Name
+                                )
+                                ).ToList();
+                    return list;
                 }
             }
         }
