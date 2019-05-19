@@ -28,6 +28,14 @@ namespace EventPlatform.Models
                 return db.Events.Where(e => e.Id.Equals(eventId)).FirstOrDefault();
             }
         }
+        public static void Insert(Event evnt)
+        {
+            using (var db = new ModelContext())
+            {
+                db.Add(evnt);
+                db.SaveChanges();
+            }
+        }
 
         public static List<Event> SelectListOrganizer(string option, int option2)
         {
@@ -91,8 +99,42 @@ namespace EventPlatform.Models
             else
                 return string.Empty;
         }
+        public static void Delete(Event evnt)
+        {
+            using (var db = new ModelContext())
+            {
+                var rating = db.Ratings.Where(r => r.Event_id == evnt.Id);
+                var schedule = db.Schedules.Where(s => s.Event_id == evnt.Id);
+                var tags = db.Tags.Where(t => t.Event_id == evnt.Id);
+                var promotions = db.Promotions.Where(p => p.Event_id == evnt.Id);
+                db.Promotions.AttachRange(promotions);
+                db.Promotions.RemoveRange(promotions);
+                db.SaveChanges();
+                db.Tags.AttachRange(tags);
+                db.Tags.RemoveRange(tags);
+                db.SaveChanges();
+                db.Ratings.AttachRange(rating);
+                db.Ratings.RemoveRange(rating);
+                db.SaveChanges();
+                db.Schedules.AttachRange(schedule);
+                db.Schedules.RemoveRange(schedule);
+                db.SaveChanges();
+                db.Events.Attach(evnt);
+                db.Events.Remove(evnt);
 
+                db.SaveChanges();
+            }
 
+        }
+
+        public static void Update(Event evnt)
+        {
+            using (var db = new ModelContext())
+            {
+                db.Update(evnt);
+                db.SaveChanges();
+            }
+        }
         public static string Update(int eventId, int state)
         {
             using (var db = new Models.ModelContext())

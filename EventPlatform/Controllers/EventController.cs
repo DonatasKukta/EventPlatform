@@ -103,9 +103,8 @@ namespace EventPlatform.Controllers
                         newEvent.Place = place;
                     newEvent.User_id = (int)HttpContext.Session.GetInt32("userid");
                     newEvent.State = EventEnum.upcoming;
-                    db.Add(newEvent);
-                    db.SaveChanges();
-                    return View("~/Views/Shared/Main.cshtml");
+                    Models.Event.Insert(newEvent);
+                    return List();
                 }
                 else
                 {
@@ -118,29 +117,13 @@ namespace EventPlatform.Controllers
         public IActionResult Remove(int eventId)
         {
 
-            using (var db = new ModelContext())
-            {
-                Event evnt = new Event() { Id = eventId };
-                var rating = db.Ratings.Where(r => r.Event_id == eventId);
-                var schedule = db.Schedules.Where(s => s.Event_id == eventId);
-                var tags = db.Tags.Where(t => t.Event_id == eventId);
-                db.Tags.AttachRange(tags);
-                db.Tags.RemoveRange(tags);
-                db.SaveChanges();
-                db.Ratings.AttachRange(rating);
-                db.Ratings.RemoveRange(rating);
-                db.SaveChanges();
-                db.Schedules.AttachRange(schedule);
-                db.Schedules.RemoveRange(schedule);
-                db.SaveChanges();
-                db.Events.Attach(evnt);
-                db.Events.Remove(evnt);
+            Event evnt = new Event() { Id = eventId };
 
-                db.SaveChanges();
-            }
+            Models.Event.Delete(evnt);
+           
             ViewData["role"] = HttpContext.Session.GetInt32("role");
             ViewData["userid"] = HttpContext.Session.GetInt32("userid");
-            return View("~/Views/Shared/EventListView.cshtml");
+            return List();
         }
 
         [HttpPost]
@@ -204,8 +187,8 @@ namespace EventPlatform.Controllers
                 evnt.Name = name;
                 evnt.Place = place;
                 evnt.Price = price;
-                db.Update(evnt);
-                db.SaveChanges();
+                Models.Event.Update(evnt);
+                
                 var e = Event.Select(eventId);
                 var ru = Rating.Select(eventId, (int)HttpContext.Session.GetInt32("userid"));
                 var r = Rating.GetRating(eventId);
