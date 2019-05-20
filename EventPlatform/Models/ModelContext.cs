@@ -10,13 +10,11 @@ namespace EventPlatform.Models
     {
 
         public DbSet<Event> Events { get; set; }
-        public DbSet<EventDuration> Durations { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Warning> Warnings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
