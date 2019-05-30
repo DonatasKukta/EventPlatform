@@ -19,6 +19,14 @@ namespace EventPlatform.Models
         public int User_id { get; set; }
         public int Event_id { get; set; }
 
+        public static List<Promotion> SellectList()
+        {
+            using (var db = new ModelContext())
+            {
+                return db.Promotions.ToList();
+            }
+        }
+
         public static List<Tuple<Promotion,string,string>> SelectList(int option, int option2)
         {
             using (var db = new Models.ModelContext())

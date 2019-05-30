@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewData["Title"] = "ScheduleView";
+    var scheduleEvents = (List<EventPlatform.Models.Event>)ViewData["EventList"];
+    var currentMonth = ViewData["month"];
+    var calendarLayout = (Dictionary<int,int>)ViewData["calendarLayout"];
+
+    var responseMessage = ViewData["operationResponse"] == null ? null : (string)ViewData["operationResponse"];
+    bool responseSucces = ViewData["operationSucces"] == null ? false : (bool)ViewData["operationSucces"];
+
+    Layout = "~/Views/MainLayout.cshtml";
+
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h2>ScheduleView</h2>
+
+@if (responseMessage != null && responseSucces == true)
+{
+    <div class="p-3 mb-2 bg-success text-white">@responseMessage</div>
+}
+else if (responseMessage != null && responseSucces == false)
+{
+    <div class="p-3 mb-2 bg-warning text-dark">@responseMessage</div>
+}
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@currentMonth</th>
+            </tr>
+            <tr>
+                <th scope="col">Diena</th>
+                <th scope="col">Pradžia</th>
+                <th scope="col">Pavadinimas</th>
+                <th scope="col">Vieta</th>
+                <th scope="col">Trukmė</th>
+                <th scope="col">Naviguoti</th>
+                <th scope="col">Trinti</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var day in calendarLayout)
+            {
+                <tr>
+                    <th rowspam=@day.Value>@day.Key</th>
+                    <td/>
+                    <td/>
+                    <td/>
+                    <td/>
+                    <td/>
+                    <td/>
+                </tr>
+
+                foreach (var scheduleEvent in scheduleEvents)
+                {
+                    if (scheduleEvent.Date.Day == day.Key)
+                    {
+                <tr>
+                    <th></th>
+                    <td>@scheduleEvent.Date.ToString("HH:mm")</td>
+                    <td>@scheduleEvent.Name</td>
+                    <td>@scheduleEvent.Place</td>
+                    <td>@($"{scheduleEvent.Duration.Days}d., {scheduleEvent.Duration.Hours}val. {scheduleEvent.Duration.Minutes}min")</td>
+                    <td>
+                        <form asp-controller="Event" asp-action="Index" method="get">
+                            <input type="hidden" name="eventId" value="@scheduleEvent.Id">
+                            <input class="btn btn-secondary dropdown-item" type="submit" value="Peržiūrėti">
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-controller="Schedule" asp-action="Remove" method="post">
+                            <input type="hidden" name="eventId" value="@scheduleEvent.Id">
+                            <input class="btn btn-secondary dropdown-item" type="submit" value="Šalinti">
+                        </form>
+                    </td>
+                </tr>
+                    }
+                }
+                
+            }
+        </tbody>
+    </table>
+</div>

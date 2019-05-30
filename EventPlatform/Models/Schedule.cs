@@ -39,5 +39,56 @@ namespace EventPlatform.Models
                 }
             }
         }
+
+        public static List<Schedule> Select(int id)
+        {
+            using (var db = new ModelContext())
+            {
+                var currrentUser = db.Users.FirstOrDefault(u => u.Id == id);
+
+                if (currrentUser == null)
+                {
+                    return new List<Schedule>();
+                }
+
+                var scheduleInfo = db.Schedules.Where(s => s.User_id == id).ToList();
+
+                return scheduleInfo;
+            }
+        }
+
+        public static List<Event> SelectSheduleEvents(List<int> eventsIds)
+        {
+            var result = new List<Event>();
+
+            using (var db = new ModelContext())
+            {
+                foreach (var eventId in eventsIds)
+                {
+                    var selectedEvent = db.Events.FirstOrDefault(e => e.Id == eventId);
+                    if (selectedEvent != null && selectedEvent.Date.Month == DateTime.Now.Month)
+                    {
+                        result.Add(selectedEvent);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static void Delete(int eventId, int userId)
+        {
+            using (var db = new ModelContext())
+            {
+                var selectedSchedule =
+                    db.Schedules.FirstOrDefault(x => x.Event_id == eventId && x.User_id == userId);
+
+                if (selectedSchedule != null)
+                {
+                    db.Schedules.Remove(selectedSchedule);
+                    db.SaveChanges();
+                }
+            }
+        }
     }
 }

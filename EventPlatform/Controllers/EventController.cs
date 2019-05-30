@@ -63,7 +63,6 @@ namespace EventPlatform.Controllers
             ViewData["Rating"] = r;
             //Set duration
             ViewData["Organiser"] = EventPlatform.Models.User.getUser(e.User_id).Username;
-            
 
             return View("~/Views/Shared/EventView.cshtml");
         }
@@ -76,7 +75,7 @@ namespace EventPlatform.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(string annotation, string description, string name, DateTime date, IFormFile image, string place, float price, DateTime duration)
+        public IActionResult Add(string annotation, string description, string name, DateTime date, IFormFile image, string place, float price, DateTime duration, string ageTag, string placeTag, string typeTag)
         {
             if (name == null || date == null || description == null || duration == null || image == null)
                 return AddEvent();
@@ -90,6 +89,8 @@ namespace EventPlatform.Controllers
             {
                 if (name != null && date != null && description != null && duration != null && img != null)
                 {
+                    var userId = (int) HttpContext.Session.GetInt32("userid");
+
                     Event newEvent = new Event();
                     newEvent.Name = name;
                     newEvent.Date = date;
@@ -101,15 +102,43 @@ namespace EventPlatform.Controllers
                         newEvent.Annotation = annotation;
                     if (place != null)
                         newEvent.Place = place;
-                    newEvent.User_id = (int)HttpContext.Session.GetInt32("userid");
+                    newEvent.User_id = userId;
                     newEvent.State = EventEnum.upcoming;
-                    Models.Event.Insert(newEvent);
+                    Event.Insert(newEvent);
+
+                    // *** Tag management for promotions ***
+                    var newTypeTag = new Tag
+                    {
+                        Name = typeTag,
+                        Event_id = newEvent.Id,
+                        User_id = userId,
+                        Weight = -1
+                    };
+                    var newPlaceTag = new Tag
+                    {
+                        Name = placeTag,
+                        Event_id = newEvent.Id,
+                        User_id = userId,
+                        Weight = -1
+                    };
+                    var newAgeTag = new Tag
+                    {
+                        Name = ageTag,
+                        Event_id = newEvent.Id,
+                        User_id = userId,
+                        Weight = -1
+                    };
+
+                    Tag.Insert(newAgeTag);
+                    Tag.Insert(newPlaceTag);
+                    Tag.Insert(newTypeTag);
+
+                    // ***
+
                     return List();
                 }
-                else
-                {
-                    return AddEvent();
-                }
+
+                return AddEvent();
             }
         }
 
@@ -123,6 +152,7 @@ namespace EventPlatform.Controllers
            
             ViewData["role"] = HttpContext.Session.GetInt32("role");
             ViewData["userid"] = HttpContext.Session.GetInt32("userid");
+            
             return List();
         }
 
@@ -162,13 +192,46 @@ namespace EventPlatform.Controllers
             {
                 var evnt = db.Events.Find(eventId);
                 ViewData["Event"] = evnt;
+
+                //Get tags
+                var allTags = Tag.SelectList();
+                var eventTags = allTags.Where(x => x.Event_id == evnt.Id).OrderBy(x=>x.Name).ToList();
+
+                switch (eventTags.Count)
+                {
+                    case 0:
+                        ViewData["TagOne"] = "-";
+                        ViewData["TagTwo"] = "-";
+                        ViewData["TagThree"] = "-";
+                        break;
+                    case 1:
+                        ViewData["TagOne"] = eventTags[0].GetNameValue();
+                        ViewData["TagTwo"] = "-";
+                        ViewData["TagThree"] = "-";
+                        break;
+                    case 2:
+                        ViewData["TagOne"] = eventTags[0].GetNameValue();
+                        ViewData["TagTwo"] = eventTags[1].GetNameValue();
+                        ViewData["TagThree"] = "-";
+                        break;
+                    case 3:
+                        ViewData["TagOne"] = eventTags[0].GetNameValue();
+                        ViewData["TagTwo"] = eventTags[1].GetNameValue();
+                        ViewData["TagThree"] = eventTags[2].GetNameValue();
+                        break;
+                    default:
+                        ViewData["TagOne"] = "-";
+                        ViewData["TagTwo"] = "-";
+                        ViewData["TagThree"] = "-";
+                        break;
+                }
             }
 
             return View("~/Views/Shared/AddEventView.cshtml");
         }
 
         [HttpPost]
-        public IActionResult EditEvent(string name, string description, string annotation, DateTime date, string place, float price, DateTime duration, int eventId)
+        public IActionResult EditEvent(string name, string description, string annotation, DateTime date, string place, float price, DateTime duration, int eventId, string ageTag, string placeTag, string typeTag)
         {
             byte[] arr;
             bool isRoleSet = HttpContext.Session.TryGetValue("role", out arr);
@@ -187,7 +250,7 @@ namespace EventPlatform.Controllers
                 evnt.Name = name;
                 evnt.Place = place;
                 evnt.Price = price;
-                Models.Event.Update(evnt);
+                Event.Update(evnt);
                 
                 var e = Event.Select(eventId);
                 var ru = Rating.Select(eventId, (int)HttpContext.Session.GetInt32("userid"));
@@ -200,7 +263,113 @@ namespace EventPlatform.Controllers
 
                 ViewData["Rating"] = r;
                 //Set duration
-                ViewData["Organiser"] = EventPlatform.Models.User.getUser(e.User_id).Username;
+                ViewData["Organiser"] = Models.User.getUser(e.User_id).Username;
+
+                var allTags = Tag.SelectList();
+                var eventTags = allTags.Where(x => x.Event_id == evnt.Id).OrderBy(x=>x.Name).ToList();
+           
+                if (eventTags.Any())
+                {
+                    switch (eventTags.Count)
+                    {
+                        case 1:
+                            eventTags[0].Name = typeTag != "acurrent" && !eventTags.Exists(x => x.Name == typeTag)
+                                ? typeTag
+                                : eventTags[0].Name;
+
+                            Tag.Update(eventTags[0]);
+
+                            break;
+                        case 2:
+                            eventTags[0].Name = typeTag != "acurrent" && !eventTags.Exists(x => x.Name == typeTag)
+                                ? typeTag
+                                : eventTags[0].Name;
+                            eventTags[1].Name = placeTag != "bcurrent" && !eventTags.Exists(x => x.Name == placeTag)
+                                ? placeTag
+                                : eventTags[1].Name;
+
+                            Tag.Update(eventTags[0]);
+                            Tag.Update(eventTags[1]);
+
+                            break;
+                        case 3:
+                            eventTags[0].Name = typeTag != "acurrent" && !eventTags.Exists(x => x.Name == typeTag)
+                                ? typeTag
+                                : eventTags[0].Name;
+                            eventTags[1].Name = placeTag != "bcurrent" && !eventTags.Exists(x => x.Name == placeTag)
+                                ? placeTag
+                                : eventTags[1].Name;
+                            eventTags[2].Name = ageTag != "ccurrent" && !eventTags.Exists(x => x.Name == ageTag)
+                                ? ageTag
+                                : eventTags[2].Name;
+
+                            Tag.Update(eventTags[0]);
+                            Tag.Update(eventTags[1]);
+                            Tag.Update(eventTags[2]);
+
+                            break;
+                        default:
+                            eventTags.ForEach(Tag.Remove);
+
+                            var tagOneNew = new Tag
+                            {
+                                Name = typeTag,
+                                Event_id = eventId,
+                                User_id = e.User_id,
+                                Weight = -1,
+                            };
+
+                            var tagTwoNew = new Tag
+                            {
+                                Name = placeTag,
+                                Event_id = eventId,
+                                User_id = e.User_id,
+                                Weight = -1
+                            };
+
+                            var tagThreeNew = new Tag
+                            {
+                                Name = ageTag,
+                                Event_id = eventId,
+                                User_id = e.User_id,
+                                Weight = -1
+                            };
+
+                            Tag.Insert(tagOneNew);
+                            Tag.Insert(tagTwoNew);
+                            Tag.Insert(tagThreeNew);
+                            break;
+                    }
+                }
+
+                else
+                {
+                    var tagOneNew = new Tag
+                    {
+                        Name = typeTag,
+                        Event_id = eventId,
+                        User_id = e.User_id,
+                        Weight = -1
+                    };
+                    var tagTwoNew = new Tag
+                    {
+                        Name = placeTag,
+                        Event_id = eventId,
+                        User_id = e.User_id,
+                        Weight = -1
+                    };
+                    var tagThreeNew = new Tag
+                    {
+                        Name = ageTag,
+                        Event_id = eventId,
+                        User_id = e.User_id,
+                        Weight = -1
+                    };
+
+                    Tag.Insert(tagOneNew);
+                    Tag.Insert(tagTwoNew);
+                    Tag.Insert(tagThreeNew);
+                }
             }
 
 

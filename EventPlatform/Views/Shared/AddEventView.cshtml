@@ -7,10 +7,15 @@
 
     var userId = ViewData["userid"];
     var e = (EventPlatform.Models.Event)ViewData["Event"];
+
+    var tagOne = ViewData["TagOne"];
+    var tagTwo = ViewData["TagTwo"];
+    var tagThree = ViewData["TagThree"];
+
     DateTime duration = DateTime.Today;
     if (e != null)
     {
-         duration = e.Date.Add(e.Duration);
+        duration = e.Date.Add(e.Duration);
     }
 
 
@@ -28,39 +33,88 @@
     @if (e == null)
     {
         <form asp-controller="Event" asp-action="Add" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="NameInput">Name</label>
-                <input name="name" type="text" class="form-control" id="NameInput" placeholder="Enter name">
-            </div>
-            <div class="form-group">
-                <label for="DescriptionInput">Description</label>
-                <input name="description" type="text" class="form-control" id="DescriptionInput" placeholder="Description">
-            </div>
-            <div class="form-group">
-                <label for="AnnotationInput">Annotation</label>
-                <input name="annotation" type="text" class="form-control" id="AnnotationInput" placeholder="Annotation">
-            </div>
-            <div class="form-group">
-                <label for="DateInput">Date</label>
-                <input name="date" type="datetime-local" class="form-control" id="DateInput" placeholder="Date">
-            </div>
-            <div class="form-group">
-                <label for="ImageInput">Image</label>
-                <input name="image" type="file" class="form-control" id="ImageInput" placeholder="Image">
-            </div>
-            <div class="form-group">
-                <label for="PlaceInput">Place</label>
-                <input name="place" type="text" class="form-control" id="PlaceInput" placeholder="Place">
-            </div>
-            <div class="form-group">
-                <label for="PriceInput">Price</label>
-                <input name="price" type="number" min="0" step="any" value="0" class="form-control" id="PriceInput" placeholder="Price">
-            </div>
-            <div class="form-group">
-                <label for="DurationInput">Ending Time</label>
-                <input name="duration" type="datetime-local" class="form-control" id="DurationInput" placeholder="Duration">
-            </div>
-            <button type="submit" class="btn btn-primary">Pridėti</button>
+        <div class="form-group">
+            <label for="NameInput">Name</label>
+            <input name="name" type="text" class="form-control" id="NameInput" placeholder="Enter name">
+        </div>
+        <div class="form-group">
+            <label for="DescriptionInput">Description</label>
+            <input name="description" type="text" class="form-control" id="DescriptionInput" placeholder="Description">
+        </div>
+        <div class="form-group">
+            <label for="AnnotationInput">Annotation</label>
+            <input name="annotation" type="text" class="form-control" id="AnnotationInput" placeholder="Annotation">
+        </div>
+        <div class="form-group">
+            <label for="DateInput">Date</label>
+            <input name="date" type="datetime-local" class="form-control" id="DateInput" placeholder="Date">
+        </div>
+        <div class="form-group">
+            <label for="ImageInput">Image</label>
+            <input name="image" type="file" class="form-control" id="ImageInput" placeholder="Image">
+        </div>
+        <div class="form-group">
+            <label for="PlaceInput">Place</label>
+            <input name="place" type="text" class="form-control" id="PlaceInput" placeholder="Place">
+        </div>
+        <div class="form-group">
+            <label for="PriceInput">Price</label>
+            <input name="price" type="number" min="0" step="any" value="0" class="form-control" id="PriceInput" placeholder="Price">
+        </div>
+        <div class="form-group">
+            <label for="DurationInput">Ending Time</label>
+            <input name="duration" type="datetime-local" class="form-control" id="DurationInput" placeholder="Duration">
+        </div>
+
+        <div class="form-group">
+            <table>
+                <tr>
+                    <td>Type tag: </td>
+                    <td>
+                        <select name="typeTag">
+                            <option value="acurrent">-</option>
+                            <option value="amuzikinis">Muzikinis</option>
+                            <option value="asportinis">Sportinis</option>
+                            <option value="apoilsinis">Poilsinis</option>
+                            <option value="apazintinis">Pazintinis</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="form-group">
+            <table>
+                <tr>
+                    <td>Place tag: </td>
+                    <td>
+                        <select name="placeTag">
+                            <option value="bcurrent">-</option>
+                            <option value="bgamtoje">Gamtoje</option>
+                            <option value="bklube">Klube</option>
+                            <option value="boficialiai">Oficialiai</option>
+                            <option value="bkeliaujant">Keliaujant</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="form-group">
+            <table>
+                <tr>
+                    <td>Age tag: </td>
+                    <td>
+                        <select name="ageTag">
+                            <option value="ccurrent">-</option>
+                            <option value="cjaunimas">Jaunimas</option>
+                            <option value="cvaikai">Vaikai</option>
+                            <option value="cvidAmzius">Vidutinio</option>
+                            <option value="csenimas">Senimas</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <button type="submit" class="btn btn-primary">Pridėti</button>
         </form>
     }
     @if (e != null)
@@ -88,12 +142,40 @@
             </div>
             <div class="form-group">
                 <label for="PriceInput">Price</label>
-                <input name="price" type="number" min="0" step="any" value="@e.Price" class="form-control" id="PriceInput" placeholder="Price" >
+                <input name="price" type="number" min="0" step="any" value="@e.Price" class="form-control" id="PriceInput" placeholder="Price">
             </div>
             <div class="form-group">
                 <label for="DurationInput">Ending Time</label>
                 <input type="hidden" name="eventId" value="@e.Id">
                 <input name="duration" type="datetime" class="form-control" id="DurationInput" placeholder="Duration" value="@duration">
+            </div>
+
+            <div class="form-group">
+                <select name="typeTag">
+                    <option value="acurrent">@tagOne</option>
+                    <option value="amuzikinis">Muzikinis</option>
+                    <option value="asportinis">Sportinis</option>
+                    <option value="apoilsinis">Poilsinis</option>
+                    <option value="apazintinis">Pazintinis</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="placeTag">
+                    <option value="bcurrent">@tagTwo</option>
+                    <option value="bgamtoje">Gamtoje</option>
+                    <option value="bklube">Klube</option>
+                    <option value="boficialiai">Oficialiai</option>
+                    <option value="bkeliaujant">Keliaujant</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="ageTag">
+                    <option value="ccurrent">@tagThree</option>
+                    <option value="cjaunimas">Jaunimas</option>
+                    <option value="cvaikai">Vaikai</option>
+                    <option value="cvidAmzius">Vidutinio</option>
+                    <option value="csenimas">Senimas</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Redaguoti</button>
         </form>
@@ -102,3 +184,4 @@
 </div>
 
 
+    

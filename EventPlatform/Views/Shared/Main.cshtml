@@ -9,6 +9,8 @@
 @if ("participant".Equals((string)ViewData["Role"]))
 {
     <a asp-controller="Event" asp-action="List">Peržiūrėti renginius</a>
+    <a asp-controller="Schedule" asp-action="List">Peržiūrėti tvarkaraštį</a>
+    <a asp-controller="Promotion" asp-action="GetList">Peržiūrėti reklamas</a>
 }
 else if ("admin".Equals((string)ViewData["Role"]))
 {

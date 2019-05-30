@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EventPlatform.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,7 +56,7 @@ namespace EventPlatform.Controllers
         }
            
 
-    [HttpGet]
+        [HttpGet]
         public IActionResult Register()
         {
             ViewData["Title"] = "Register page";
@@ -92,6 +93,11 @@ namespace EventPlatform.Controllers
             }
             ViewData["Title"] = "Login page";
             return View("~/Views/Shared/Login.cshtml");
+        }
+
+        public List<Tag> GetUserInterests(int userId)
+        {
+            return Models.User.GetUserInterests(userId);
         }
     }
 }
