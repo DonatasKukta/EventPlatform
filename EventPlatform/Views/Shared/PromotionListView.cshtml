@@ -4,6 +4,9 @@
     ViewData["Title"] = "EventListView";
     var promotions = (List<Tuple<Promotion, string, string>>)ViewData["PromotionList"];
     var role = ViewData["role"];
+    var userPromotions = (List<Promotion>) ViewData["UserPromotions"];
+    var userEvents = (List<Event>) ViewData["UserEvents"];
+    var promoImages = (Dictionary<int, string>) ViewData["Images"];
     Layout = "~/Views/MainLayout.cshtml";
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -13,23 +16,84 @@
     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Filtruoti
     </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <form asp-controller="Promotion" asp-action="List" method="get">
-            <input class="btn btn-secondary dropdown-item" type="submit" value="Visi">
-        </form>
-        <form asp-controller="Promotion" asp-action="List" method="get">
-            <input type="hidden" name="option" value="0"><br>
-            <input class="btn btn-secondary dropdown-item" type="submit" value="Patvirinti">
-        </form>
-        <form asp-controller="Promotion" asp-action="List" method="get">
-            <input type="hidden" name="option" value="1"><br>
-            <input class="btn btn-secondary dropdown-item" type="submit" value="Laukiantys patvirtinimo">
-        </form>
-        <form asp-controller="Promotion" asp-action="List" method="get">
-            <input type="hidden" name="option" value="2"><br>
-            <input class="btn btn-secondary dropdown-item" type="submit" value="Atšaukti">
-        </form>
-    </div>
+    @if ((int)ViewData["role"] == 0 || (int)ViewData["role"] == 3)
+    {
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <form asp-controller="Promotion" asp-action="List" method="get">
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Visi">
+            </form>
+            <form asp-controller="Promotion" asp-action="List" method="get">
+                <input type="hidden" name="option" value="0"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Patvirinti">
+            </form>
+            <form asp-controller="Promotion" asp-action="List" method="get">
+                <input type="hidden" name="option" value="1"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Laukiantys patvirtinimo">
+            </form>
+            <form asp-controller="Promotion" asp-action="List" method="get">
+                <input type="hidden" name="option" value="2"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Atšaukti">
+            </form>
+        </div>
+    }
+
+    @if ((int)ViewData["role"] == 2)
+    {
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="visi"><br>
+                <input class="btn btn-secondary dropdown-Item" type="submit" value="Visi">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="amuzikinis"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Muzikinis">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="asportinis"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Sportinis">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="apoilsinis"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Poilsinis">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="apazintinis"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Pazintinis">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="bgamtoje"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Gamtoje">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="bklube"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Klube">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="boficialiai"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Oficialiai">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="bkeliaujant"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Keliaujant">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="cjaunimas"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Jaunimas">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="cvaikai"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Vaikai">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="cvidAmzius"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Vidutinio">
+            </form>
+            <form asp-controller="Promotion" asp-action="GetList" method="get">
+                <input type="hidden" name="tagName" value="csenimas"><br>
+                <input class="btn btn-secondary dropdown-item" type="submit" value="Senimas">
+            </form>
+        </div>
+    }
 </div>
 <br />
 @if ((int)role == 3)
@@ -42,45 +106,88 @@
 }
 <div class="container">
     <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Užsakymo nr.</th>
-                <th scope="col">Renginys</th>
-                <th scope="col">Būsena</th>
-                @if ((int)ViewData["role"] == 0)
-                {
-                    <th scope="col">Nuoroda</th>
-                }
-                @if ((int)ViewData["role"] == 3)
-                {
-                    <th scope="col">Atšaukti></th>
-                }
-            </tr>
-        </thead>
+        
         <tbody>
-            @foreach (var p in promotions)
+            @if ((int)ViewData["role"] == 0 || (int)ViewData["role"] == 3)
+             {
+                 <thead>
+                 <tr>
+                     <th scope="col">Užsakymo nr.</th>
+                     <th scope="col">Renginys</th>
+                     <th scope="col">Būsena</th>
+                     @if ((int)ViewData["role"] == 0 || (int)ViewData["role"] == 2)
+                     {
+                         <th scope="col">Nuoroda</th>
+                     }
+                     @if ((int)ViewData["role"] == 3)
+                     {
+                         <th scope="col">Atšaukti></th>
+                     }
+                 </tr>
+                 </thead>
+                 foreach (var p in promotions)
+                 {
+                    <tr>
+                        <td>@p.Item1.Id</td>
+                        <td>@p.Item3</td>
+                        <td>@Promotion.getStateString(p.Item1.State)</td>
+                        <td>
+                            @if ((int)ViewData["role"] == 0)
+                            {
+                                <form asp-controller="Promotion" asp-action="Promotion" method="get">
+                                    <input type="hidden" name="promotionId" value="@p.Item1.Id">
+                                    <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
+                                </form>
+                            }
+                            @if ((int)ViewData["role"] == 3)
+                            {
+                                <form asp-controller="Promotion" asp-action="Remove" method="post">
+                                    <input type="hidden" name="promotionId" value="@p.Item1.Id">
+                                    <input class="btn btn-secondary dropdown-item" type="submit" value="Pašalinti">
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                 }
+             }
+
+            @if ((int) ViewData["role"] == 2)
             {
-                <tr>
-                    <td>@p.Item1.Id</td>
-                    <td>@p.Item3</td>
-                    <td>@Promotion.getStateString(p.Item1.State)</td>
-                    <td>
-                        @if ((int)ViewData["role"] == 0)
+                <thead>
+                    <tr>
+                        <th scope="col">Nuotrauka</th>
+                        <th scope="col">Anotacija</th>
+                        <th scope="col">Renginys</th>
+                        <th scope="col">Kaina</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Apie renginį</th>
+                    </tr>
+                </thead>
+                foreach (var userPromotion in userPromotions)
+                {
+                    <tr>
+                        <td style="max-width: 100px;"><img src=@promoImages.First(x=>x.Key == userPromotion.Id).Value 
+                                 class="rounded mx-auto d-block" 
+                                 alt="Responsive image" 
+                                 style="max-width:100%;" /></td>
+                        <td>@userPromotion.Annotation</td>
+                        @foreach (var userEvent in userEvents)
                         {
-                            <form asp-controller="Promotion" asp-action="Promotion" method="get">
-                                <input type="hidden" name="promotionId" value="@p.Item1.Id">
-                                <input class="btn btn-secondary dropdown-item" type="submit" value="Detaliau">
-                            </form>
+                            if (userPromotion.Event_id == userEvent.Id)
+                            {
+                                <td>@userEvent.Name</td>
+                                <td>@userEvent.Price</td>
+                                <td>@userEvent.Date.Day - @userEvent.Date.Month - @userEvent.Date.Year</td>
+                                <td>
+                                    <form asp-controller="Event" asp-action="Index" method="get">
+                                        <input type="hidden" name="eventId" value="@userEvent.Id">
+                                        <input class="btn btn-secondary dropdown-item" type="submit" value="Peržiūrėti">
+                                    </form>
+                                </td>
+                            }
                         }
-                        @if ((int)ViewData["role"] == 3)
-                        {
-                            <form asp-controller="Promotion" asp-action="Remove" method="post">
-                                <input type="hidden" name="promotionId" value="@p.Item1.Id">
-                                <input class="btn btn-secondary dropdown-item" type="submit" value="Pašalinti">
-                            </form>
-                        }
-                    </td>
-                </tr>
+                    </tr>    
+                }
             }
         </tbody>
     </table>

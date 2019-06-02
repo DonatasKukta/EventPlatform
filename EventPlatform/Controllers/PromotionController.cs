@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using EventPlatform.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +11,159 @@ namespace EventPlatform.Controllers
 {
     public class PromotionController : Controller
     {
+        [HttpGet]
+        public IActionResult GetList(string tagName = "visi")
+        {
+            //Get user id
+            var userId = (int)HttpContext.Session.GetInt32("userid");
+            var profileController = new ProfileController();
+            
+            //Get user interests
+            var userInterests = profileController.GetUserInterests(userId);
+            //Get all promotions and select only approved
+            var allPromotions = Models.Promotion.SellectList();
+            var approvedPromotionsList = allPromotions.Where(x => x.State == OrderState.approved).ToList();
+
+            //Get all events
+            var allEvents = Event.SelectList("");
+
+            //Get all tags
+            var allTags = Tag.SelectList();
+
+            //Get specified number for favourite event tags of selected user 
+            List<string> topUserTags;
+
+            //*****
+            //IF USER HAS CURRENT TAGS
+            //*****
+            //If user has interests - evaluate interests and take specific promotions
+            if (userInterests.Count != 0)
+            {
+                topUserTags = EvaluateInterests(userInterests);
+
+                //Select event tags that have same name value as users favourite ones
+                var userFavouriteTags = allTags.Where(x => topUserTags.Contains(x.Name) && x.Weight == -1).ToList();
+
+                //Filter selected tags that have same name as user fav and have approved promotions with their events
+                var appPromEventsByTag = allEvents.Where(
+                    x => approvedPromotionsList.Exists(y => y.Event_id == x.Id) &&
+                         userFavouriteTags.Exists(z => z.Event_id == x.Id)).ToList();
+
+                //Form promotions list from promotions that have their events in formed list
+                var promotionsFinalList = approvedPromotionsList
+                    .Where(x => appPromEventsByTag.Exists(y => y.Id == x.Event_id)).ToList();
+
+                //If filter is selected - select only promotions with included events that have selected tag value
+                if (tagName != "visi")
+                {
+                    var filteredTags = Tag.SelectList();
+                    filteredTags = filteredTags.Where(x => x.Name == tagName).ToList();
+
+                    appPromEventsByTag = appPromEventsByTag.Where(x => filteredTags.Exists(y => y.Event_id == x.Id))
+                        .ToList();
+
+                    promotionsFinalList = promotionsFinalList
+                        .Where(x => appPromEventsByTag.Exists(y => y.Id == x.Event_id)).ToList();
+                }
+
+                //Form dictionary for image loading
+                var imageDictionary = new Dictionary<int, string>();
+
+                //Cycle through promotions and add formed line values to dictionary
+                foreach (var promotion in promotionsFinalList)
+                {
+                    var base64Image = Convert.ToBase64String(promotion.Image);
+                    var imagePathString = $"data:image/jpg;base64,{base64Image}";
+                    imageDictionary.Add(promotion.Id, imagePathString);
+                }
+
+                //Bind formed data values
+                ViewData["UserPromotions"] = promotionsFinalList;
+                ViewData["UserEvents"] = appPromEventsByTag;
+                ViewData["Images"] = imageDictionary;
+            }
+
+            //*****
+            //IF USER HAS NO CURRENT TAGS
+            //*****
+            else
+            {
+                var promotionsByEvent = allEvents.Where(x => approvedPromotionsList.Exists(y => y.Event_id == x.Id)).ToList();
+
+                //If filter is selected - select only promotions with included events that have selected tag value
+                if (tagName != "visi")
+                {
+                    var filteredTags = allTags;
+                    filteredTags = filteredTags.Where(x => x.Name == tagName).ToList();
+
+                    promotionsByEvent = promotionsByEvent.Where(x => filteredTags.Exists(y => y.Event_id == x.Id))
+                        .ToList();
+
+                    approvedPromotionsList = approvedPromotionsList
+                        .Where(x => promotionsByEvent.Exists(y => y.Id == x.Event_id)).ToList();
+                }
+
+                //Form dictionary for image loading
+                var imageDictionary = new Dictionary<int, string>();
+
+                //Cycle through promotions and add formed line values to dictionary
+                foreach (var promotion in approvedPromotionsList)
+                {
+                    var base64Image = Convert.ToBase64String(promotion.Image);
+                    var imagePathString = $"data:image/jpg;base64,{base64Image}";
+                    imageDictionary.Add(promotion.Id, imagePathString);
+                }
+
+                //Bind formed data values
+                ViewData["UserPromotions"] = approvedPromotionsList.OrderByDescending(x=>x.Id).ToList();
+                ViewData["UserEvents"] = promotionsByEvent;
+                ViewData["Images"] = imageDictionary;
+            }
+
+            ViewData["role"] = HttpContext.Session.GetInt32("role");
+            return View("~/Views/Shared/PromotionListView.cshtml");
+        }
+
+        private List<string> EvaluateInterests(List<Tag> userInterests)
+        {
+            const int TopNCount = 2;
+            var result = new List<string>();
+
+            //If user interests does not exeed selected const, add only specified amount of tags
+            if (userInterests.Count > TopNCount)
+            {
+                for (var i = 0; i < TopNCount; i++)
+                {
+                    //create new tag for each input line with weight 0
+                    var maxTag = new Tag { Weight = 0 };
+
+                    //Cycle through all interests and find one with largest weight
+                    foreach (var userInterest in userInterests)
+                    {
+                        if (userInterest.Weight >= maxTag.Weight)
+                        {
+                            maxTag = userInterest;
+                        }
+                    }
+
+                    //Add tag to new list and remove from current
+                    result.Add(maxTag.Name);
+                    userInterests.Remove(maxTag);
+                }
+            }
+            //Else add all user interests to list
+            else
+            {
+                //Else add all tags
+                foreach (var userInterest in userInterests)
+                {
+                    result.Add(userInterest.Name);
+                }
+            }
+
+            return result;
+        }
+
         [HttpGet]
         public IActionResult List(int option = -1)
         {

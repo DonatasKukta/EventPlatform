@@ -65,6 +65,23 @@ namespace EventPlatform.Models
             else
                 return false;
         }
+
+        public static List<Tag> GetUserInterests(int userId)
+        {
+            using (var db = new ModelContext())
+            {
+                var userTags = new List<Tag>();
+                var allTags = db.Tags.ToList();
+                foreach (var singleTag in allTags)
+                {
+                    if (singleTag.Weight != -1 && singleTag.User_id == userId)
+                    {
+                        userTags.Add(singleTag);
+                    }   
+                }
+                return userTags;
+            }
+        }
     }
 
     public enum UserType
